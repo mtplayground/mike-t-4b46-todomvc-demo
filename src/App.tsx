@@ -35,6 +35,13 @@ function App() {
     [dispatch],
   );
 
+  const handleEditTodo = useCallback(
+    (id: TodoId, title: string) => {
+      dispatch({ type: 'edit', id, title });
+    },
+    [dispatch],
+  );
+
   return (
     <>
       <section className="todoapp">
@@ -47,6 +54,7 @@ function App() {
             todos={visibleTodos}
             onToggleTodo={handleToggleTodo}
             onDeleteTodo={handleDeleteTodo}
+            onEditTodo={handleEditTodo}
           />
         </main>
 

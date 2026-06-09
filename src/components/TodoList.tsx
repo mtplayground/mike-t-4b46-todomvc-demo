@@ -5,9 +5,15 @@ interface TodoListProps {
   todos: ReadonlyArray<Todo>;
   onToggleTodo: (id: TodoId) => void;
   onDeleteTodo: (id: TodoId) => void;
+  onEditTodo: (id: TodoId, title: string) => void;
 }
 
-export function TodoList({ todos, onToggleTodo, onDeleteTodo }: TodoListProps) {
+export function TodoList({
+  todos,
+  onToggleTodo,
+  onDeleteTodo,
+  onEditTodo,
+}: TodoListProps) {
   return (
     <ul className="todo-list">
       {todos.map((todo) => (
@@ -16,6 +22,7 @@ export function TodoList({ todos, onToggleTodo, onDeleteTodo }: TodoListProps) {
           todo={todo}
           onToggleTodo={onToggleTodo}
           onDeleteTodo={onDeleteTodo}
+          onEditTodo={onEditTodo}
         />
       ))}
     </ul>

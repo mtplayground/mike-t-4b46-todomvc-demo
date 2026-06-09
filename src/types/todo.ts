@@ -5,3 +5,5 @@ export interface Todo {
 }
 
 export type TodoId = Todo['id'];
+
+export type TodoFilter = 'all' | 'active' | 'completed';

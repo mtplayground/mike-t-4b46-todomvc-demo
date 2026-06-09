@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
+import { ToggleAll } from './components/ToggleAll';
 import { TodoList } from './components/TodoList';
 import { useHashFilter } from './hooks/useHashFilter';
 import { usePersistentTodos } from './hooks/usePersistentTodos';
@@ -8,6 +9,8 @@ import type { Todo, TodoFilter, TodoId } from './types/todo';
 function App() {
   const [activeFilter] = useHashFilter();
   const [todos, dispatch] = usePersistentTodos();
+  const hasTodos = todos.length > 0;
+  const allTodosCompleted = hasTodos && todos.every((todo) => todo.completed);
 
   const visibleTodos = useMemo(
     () => getVisibleTodos(todos, activeFilter),
@@ -42,14 +45,24 @@ function App() {
     [dispatch],
   );
 
+  const handleToggleAll = useCallback(
+    (completed: boolean) => {
+      dispatch({ type: 'toggle-all', completed });
+    },
+    [dispatch],
+  );
+
   return (
     <>
       <section className="todoapp">
         <Header onAddTodo={handleAddTodo} />
 
         <main className="main">
-          <input id="toggle-all" className="toggle-all" type="checkbox" />
-          <label htmlFor="toggle-all">Mark all as complete</label>
+          <ToggleAll
+            allCompleted={allTodosCompleted}
+            disabled={!hasTodos}
+            onToggleAll={handleToggleAll}
+          />
           <TodoList
             todos={visibleTodos}
             onToggleTodo={handleToggleTodo}

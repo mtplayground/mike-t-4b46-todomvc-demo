@@ -1,21 +1,23 @@
+import { useCallback } from 'react';
+import { Header } from './components/Header';
 import { useHashFilter } from './hooks/useHashFilter';
 import { usePersistentTodos } from './hooks/usePersistentTodos';
 
 function App() {
   useHashFilter();
-  usePersistentTodos();
+  const [, dispatch] = usePersistentTodos();
+
+  const handleAddTodo = useCallback(
+    (title: string) => {
+      dispatch({ type: 'add', id: createTodoId(), title });
+    },
+    [dispatch],
+  );
 
   return (
     <>
       <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <input
-            className="new-todo"
-            placeholder="What needs to be done?"
-            autoFocus
-          />
-        </header>
+        <Header onAddTodo={handleAddTodo} />
 
         <main className="main">
           <input id="toggle-all" className="toggle-all" type="checkbox" />
@@ -57,3 +59,11 @@ function App() {
 }
 
 export default App;
+
+function createTodoId(): string {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}

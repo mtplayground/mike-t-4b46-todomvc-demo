@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ToggleAll } from './components/ToggleAll';
 import { TodoList } from './components/TodoList';
@@ -7,10 +8,12 @@ import { usePersistentTodos } from './hooks/usePersistentTodos';
 import type { Todo, TodoFilter, TodoId } from './types/todo';
 
 function App() {
-  const [activeFilter] = useHashFilter();
+  const [activeFilter, setActiveFilter] = useHashFilter();
   const [todos, dispatch] = usePersistentTodos();
   const hasTodos = todos.length > 0;
   const allTodosCompleted = hasTodos && todos.every((todo) => todo.completed);
+  const activeCount = todos.filter((todo) => !todo.completed).length;
+  const completedCount = todos.length - activeCount;
 
   const visibleTodos = useMemo(
     () => getVisibleTodos(todos, activeFilter),
@@ -52,6 +55,10 @@ function App() {
     [dispatch],
   );
 
+  const handleClearCompleted = useCallback(() => {
+    dispatch({ type: 'clear-completed' });
+  }, [dispatch]);
+
   return (
     <>
       <section className="todoapp">
@@ -71,27 +78,13 @@ function App() {
           />
         </main>
 
-        <footer className="footer">
-          <span className="todo-count">
-            <strong>0</strong> items left
-          </span>
-          <ul className="filters">
-            <li>
-              <a className="selected" href="#/">
-                All
-              </a>
-            </li>
-            <li>
-              <a href="#/active">Active</a>
-            </li>
-            <li>
-              <a href="#/completed">Completed</a>
-            </li>
-          </ul>
-          <button className="clear-completed" type="button">
-            Clear completed
-          </button>
-        </footer>
+        <Footer
+          activeCount={activeCount}
+          completedCount={completedCount}
+          activeFilter={activeFilter}
+          onSelectFilter={setActiveFilter}
+          onClearCompleted={handleClearCompleted}
+        />
       </section>
 
       <footer className="info">

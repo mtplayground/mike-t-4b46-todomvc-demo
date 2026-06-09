@@ -1,6 +1,8 @@
+import { useHashFilter } from './hooks/useHashFilter';
 import { usePersistentTodos } from './hooks/usePersistentTodos';
 
 function App() {
+  useHashFilter();
   usePersistentTodos();
 
   return (

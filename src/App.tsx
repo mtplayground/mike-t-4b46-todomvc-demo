@@ -1,4 +1,8 @@
+import { usePersistentTodos } from './hooks/usePersistentTodos';
+
 function App() {
+  usePersistentTodos();
+
   return (
     <>
       <section className="todoapp">

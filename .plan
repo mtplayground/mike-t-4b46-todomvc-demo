@@ -1,0 +1,41 @@
+# Architecture Plan
+
+Product: TodoMVC app for `mike-t-4b46-todomvc-demo`.
+
+## Project Shape
+
+- Use Vite + React + TypeScript as the application scaffold.
+- Keep source under `src/` with small, issue-aligned modules:
+  - `src/main.tsx`: React entrypoint and stylesheet imports.
+  - `src/App.tsx`: top-level composition, reducer wiring, persistence wiring, derived counts, and filter selection.
+  - `src/types/todo.ts`: shared `Todo` and `Filter` types.
+  - `src/state/todoReducer.ts`: reducer, action types, and pure todo operations.
+  - `src/storage/todoStorage.ts`: localStorage hydrate/persist helpers.
+  - `src/hooks/useHashFilter.ts`: TodoMVC hash route synchronization for `#/`, `#/active`, and `#/completed`.
+  - `src/components/Header.tsx`: new-todo input.
+  - `src/components/TodoList.tsx` and `src/components/TodoItem.tsx`: filtered list rendering, toggle, delete, and edit UI.
+  - `src/components/ToggleAll.tsx`: aggregate completion control.
+  - `src/components/Footer.tsx`: count, filters, and clear-completed action.
+  - `src/config.ts`: Vite env-backed config such as the localStorage key.
+- Tests should live near the behavior they cover, using `src/**/*.test.ts` for Vitest unit tests and `e2e/*.spec.ts` for Playwright.
+
+## Issue Dependencies
+
+- Issue #1 establishes the Vite React TypeScript baseline and package scripts.
+- Issues #2 and #3 build on #1 by adding official TodoMVC CSS/markup and environment configuration.
+- Issues #4, #5, and #6 define shared application behavior: reducer, persistence, and hash filtering.
+- Issues #7 through #11 implement UI components on top of the reducer, persistence, styling, and filter hook.
+- Issue #12 depends on reducer and storage modules being stable enough for focused unit coverage.
+- Issue #13 depends on the full user workflow existing in the browser.
+- Issue #14 depends on the app building cleanly and documents self-hosted static serving.
+
+## Key Design Decisions
+
+- Keep todo state transitions in a pure reducer so UI components stay thin and unit tests can cover behavior without DOM setup.
+- Use `crypto.randomUUID()` for todo IDs when available, with a timestamp/random fallback only if needed for browser compatibility.
+- Store only the todo array in localStorage; derive active/completed counts and filtered views in React.
+- Treat corrupt or incompatible localStorage data as an empty list and overwrite it on the next successful state persist.
+- Use Vite env variables with a `VITE_` prefix, including a default localStorage key namespace when no environment override is present.
+- Follow canonical TodoMVC class names and DOM structure so `todomvc-app-css` and `todomvc-common` apply without custom styling.
+- Keep hash routing deliberately small: normalize unknown hashes to `#/` and expose a typed filter value.
+- Add Playwright coverage only after the complete UI flow exists, including reload persistence.
